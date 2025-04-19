@@ -23,15 +23,15 @@ export const insertVektor = async () => {
     });
 
     // Pastikan koleksi ada, kalau belum dibuat
-    const vectorStore = await Chroma.fromDocuments(
-      preparedDocs,
-      embeddingService,
-      {
-        collectionName: "covid-19",
-        url: "http://localhost:8000",
-      }
-    );
+    const vectorStore = await Chroma.fromExistingCollection(embeddingService, {
+      collectionName: "covid-19",
+      url: "http://localhost:8000",
+    });
+    vectorStore.delete({
+      filter: { source: "./datas/covid.csv" }, // Hapus koleksi jika ada
+    }); // Hapus koleksi jika ada
 
+    vectorStore.addDocuments(preparedDocs); // Simpan dokumen ke dalam vector stores
     console.log("✅ Vektor berhasil disimpan ke dalam vector store");
   } catch (error) {
     console.error("❌ Error insertVektor:", error);
@@ -46,9 +46,8 @@ export const queryVektor = async (query: string) => {
     });
 
     // Cari dokumen paling mirip
-    const results = await vectorStore.similaritySearch(query); // Ambil 3 teratas
+    const results = await vectorStore.similaritySearch(query, 10); // Mengambil 10 hasil teratas
 
-    // Tampilkan hasil
     return results;
   } catch (error) {
     console.error("❌ Error queryVektor:", error);

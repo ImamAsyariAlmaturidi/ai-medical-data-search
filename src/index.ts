@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { queryVektor } from "./embeddings/covid"; // Fungsi query untuk mengambil vektor
+import { insertVektor, queryVektor } from "./embeddings/covid"; // Fungsi query untuk mengambil vektor
 dotenv.config();
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { RunnableSequence } from "@langchain/core/runnables";
@@ -12,7 +12,7 @@ async function getData() {
   try {
     // Ambil pertanyaan dari pengguna
     const userQuestion =
-      "berikan detail pasien yang memiliki history current_or_former_smoker?";
+      "berikan detail data clinician atau patient yang covid19_confirmed_case";
 
     const result = await queryVektor(userQuestion); // Menggunakan key untuk query vektor
 
@@ -54,4 +54,11 @@ async function getData() {
   }
 }
 
+// async function main() {
+//   // await getData();
+//   await insertVektor();
+//   // await queryVektor("berikan detail pasien yang memiliki history current_or_former_smoker?");
+//   // await chunkedDocuments();
+// }
+// main();
 getData();
